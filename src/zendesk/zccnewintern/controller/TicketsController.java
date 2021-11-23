@@ -14,34 +14,34 @@ import zendesk.zccnewintern.model.Tickets;
 
 public class TicketsController {
 
-	private Tickets tickets;
-	private static List<Tickets> ticketsData = new ArrayList<Tickets>();
+	private static ArrayList<Tickets> ticketsData = new ArrayList<Tickets>();
+	public List<ArrayList<Tickets>> ticketsList = new ArrayList<>();
 
-	public List<Tickets> httpConnection() {
+	public ArrayList<Tickets> httpConnection() {
+
+		String url = "https://zccnewintern.zendesk.com/api/v2/requests/open.json";
+		String[] authHeader = { "Authorization",
+				"Basic am9zZS5wc2dAaG90bWFpbC5jb20vdG9rZW46RWp3dVRRZnVlTjJUMGxqODlubHNiMFJEUGFtVDRMSGE5VkxWWTBwQw==" };
 
 		HttpClient client = HttpClient.newHttpClient();
-		HttpRequest request = HttpRequest.newBuilder()
-				.uri(URI.create("https://zccnewintern.zendesk.com/api/v2/requests/open.json"))
-				.header("Authorization",
-						"Basic am9zZS5wc2dAaG90bWFpbC5jb20vdG9rZW46RWp3dVRRZnVlTjJUMGxqODlubHNiMFJEUGFtVDRMSGE5VkxWWTBwQw==")
+		HttpRequest request = HttpRequest.newBuilder().uri(URI.create(url)).header(authHeader[0], authHeader[1])
 				.build();
 
 		return client.sendAsync(request, HttpResponse.BodyHandlers.ofString()).thenApply(HttpResponse::body)
-				.thenApply(TicketsController::parse) // double colon is method reference operator s used to call a
-														// method by referring to it with the help of its class
-														// directly. They behave exactly as the lambda expressions. The
-														// only difference it has from lambda expressions is that this
-														// uses direct reference to the method by name instead of
-														// providing a delegate to the method.
-				.join();
+				.thenApply(TicketsController::parseJSON).join();
+		// double colon is method reference operator s used to call a
+		// method by referring to it with the help of its class
+		// directly. They behave exactly as the lambda expressions. The
+		// only difference it has from lambda expressions is that this
+		// uses direct reference to the method by name instead of
+		// providing a delegate to the method.
 
 	}
 
-	private static List<Tickets> parse(String responseBody) { 
-		
+	private static ArrayList<Tickets> parseJSON(String responseBody) {
 
 		JSONObject tickets = new JSONObject(responseBody);
-		JSONArray ticketsArray = tickets.getJSONArray("requests");// get the array results inside the json obj returned
+		JSONArray ticketsArray = tickets.getJSONArray("requests");// get the array requests inside the json obj returned
 																	// by the api
 		int n = ticketsArray.length();
 
@@ -53,12 +53,33 @@ public class TicketsController {
 
 			// save the data on the tickets constructor
 			ticketsData.add(new Tickets(id, subject, description));
-			// System.out.println("Id: " + id + " Subject: " + subject + " \nBody: " +
-			// description.substring(0,10));
 
 		}
 
 		return ticketsData;
+	}
+
+	public void ticketPages(ArrayList<Tickets> ticketsData) {
+
+		int ticketsPerPage = 25;
+		int counter = 0;
+		int numberOfPages = (int) Math.ceil(ticketsData.size() / (float) ticketsPerPage); // round up the number of
+																							// pages
+		for (int i = 0; i < numberOfPages; i++) {
+
+			ArrayList<Tickets> pages = new ArrayList<>();//create a new page every time it contains 25 tickets
+			
+			//ticketsPerPage - 1 because the index in pages start at 0 up to 24 = 25
+			for (int j = 0; j <= ticketsPerPage -1; j++) {
+				if (counter < ticketsData.size()) {
+					pages.add(ticketsData.get(counter));
+					counter++;
+				}
+			}
+
+			ticketsList.add(pages);
+		}
+
 	}
 
 }

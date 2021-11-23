@@ -9,7 +9,8 @@ public class Tickets {
 	public Tickets(int id, String subject, String description) {
 		this.id = id;
 		this.subject = subject;
-		this.description = description;
+		String reducedDescription = description.substring(0, (description.indexOf(".") + 1));		
+		this.description = reducedDescription;
 	}
 
 	public int getId() {
@@ -22,6 +23,17 @@ public class Tickets {
 
 	public String getDescription() {
 		return description;
+	}
+	
+
+	public void setDescription(String description) {
+		String reducedDescription = description.substring(0,150);
+		this.description = reducedDescription;
+	}
+
+	@Override
+	public String toString() {
+		return "\nTicket Id: " + id + "\nSubject: " + subject + "\nDescription: " + description + "\n";
 	}
 	
 
