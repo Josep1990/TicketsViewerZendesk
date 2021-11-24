@@ -1,8 +1,6 @@
 package zendesk.zccnewintern.view;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Scanner;
 
@@ -26,25 +24,31 @@ public class TicketsView {
 	public void init() {// fetch data and start application
 		tickets.ticketPages(tickets.httpConnection());// fetch data and load constructor with tickets also create pages
 														// with 25 tickes per page
-		System.out.println("*** Application Started ***");
+		
 		mainMenu(); // start menu options1
 	}
 
-	public void mainMenu() {// the first menu that appears to the user
-
-		int totalOfTickets = countElemetnsInList(); // get the number of tickets
-		int firstId = ticketsList.get(0).get(0).getId();// first ticket id
-		int lastId = ticketsList.get(ticketsList.size() - 1).get(ticketsList.get(ticketsList.size() - 1).size() - 1)
+	private void mainMenu() {// the first menu that appears to the user
+		int totalOfTickets;
+		int firstId;
+		int lastId;
+		if(ticketsList.size() > 0) {
+			totalOfTickets = countElemetnsInList(); // get the number of tickets
+			firstId = ticketsList.get(0).get(0).getId();// first ticket id
+			lastId = ticketsList.get(ticketsList.size() - 1).get(ticketsList.get(ticketsList.size() - 1).size() - 1)
 				.getId();// last ticket
+			System.out.println("*** Application Running***");
+			System.out.println("*** Welcome to the Ticket Viewer ***\n");
+			System.out.println("************************************");
+			System.out.println("Total of Tickets availabel: " + totalOfTickets);
+			System.out.println("First Ticket id: " + firstId);
+			System.out.println("Last Ticket id: " + lastId);
+			System.out.println("************************************\n");
 
-		System.out.println("*** Welcome to the Ticket Viewer ***\n");
-		System.out.println("************************************");
-		System.out.println("Total of Tickets availabel: " + totalOfTickets);
-		System.out.println("First Ticket id: " + firstId);
-		System.out.println("Last Ticket id: " + lastId);
-		System.out.println("************************************\n");
+			startMainMenu();
+		}
 
-		startMainMenu();
+		
 
 	}
 
@@ -167,7 +171,9 @@ public class TicketsView {
 		}
 		return size;
 	}
-
+//*********************************************************************
+//********************* Single ticket view
+	//validates inputs and navigate through the tickets 
 	private void singleTicketMenu() {
 		
 		String input = "";
@@ -191,17 +197,17 @@ public class TicketsView {
 						System.out.println("Thank you for using this App, have a good one.");
 						exit = 0;
 						System.exit(exit);
-					} else { // navigate through the pages
+					} else { // retrieve the ticket and print to the cli
 						
 						targetId = Integer.parseInt(input);
-						if(getTicket(targetId) == null) {
+						if(getTicket(targetId) != null) {
 							
-							System.out.println("Ticket Id Not Found.");
-							System.out.println("Please, check the Id list for references\n");
-							
-						}else {
 							System.out.println("*** Ticket requested ***");
 							System.out.println(getTicket(targetId));
+		
+						}else {
+							System.out.println("Ticket Id Not Found.");
+							System.out.println("Please, check the Id list for references\n");
 						}
 					}
 				} else {// print a message if the user input a special caracter
@@ -214,12 +220,13 @@ public class TicketsView {
 		} while (exit != 0);
 
 	}
-
+	
+	//display the tickets id so the user can select single ticket view
 	private void showTicketsIds() {
 		System.out.println("*** Tickets Id's List ***\n");
 		for (ArrayList<Tickets> innerList : ticketsList) {
 
-			for (Tickets ticket : innerList) {
+			for (Tickets ticket : innerList) {//display tickets ids
 
 				System.out.print(ticket.getId() + ", ");
 			}
@@ -228,14 +235,14 @@ public class TicketsView {
 
 	}
 
-	// print the tickets per page and validate the input
+	// print the ticket selected by the user else return null
 	private Tickets getTicket(int targetId) {
 
-			for (ArrayList<Tickets> innerList : ticketsList) {
+			for (ArrayList<Tickets> innerList : ticketsList) {//iterate through the list
 
 				for (Tickets ticket : innerList) {
 
-					if (ticket.getId() == targetId) {						
+					if (ticket.getId() == targetId) {//retrieve ticket that matches the id						
 						
 						return ticket;
 					}
