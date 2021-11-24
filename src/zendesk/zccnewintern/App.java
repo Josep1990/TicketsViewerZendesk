@@ -17,6 +17,11 @@ public class App {
 		
 		tv.init();
 		
+//		int x = 76;
+//		int y = 25;
+//		int numberOfPages = (int) Math.ceil(x / (float) y);
+//		System.out.println(numberOfPages);
+		
 
 
 	}
