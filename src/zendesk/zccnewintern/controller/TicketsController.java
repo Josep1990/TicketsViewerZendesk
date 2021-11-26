@@ -61,8 +61,7 @@ public class TicketsController {
 			}
 		} catch (Exception e) {
 
-			System.out.println("Hey, I am not available at this momment.");
-			System.out.println("Please, try again later... ");
+			System.out.println("Hey, I am not available at this momment.");			
 
 		}
 

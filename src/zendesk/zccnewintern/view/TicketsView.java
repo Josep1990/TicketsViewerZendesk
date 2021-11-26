@@ -10,33 +10,31 @@ import zendesk.zccnewintern.model.Tickets;
 public class TicketsView {
 
 	private TicketsController tickets;
-	private List<ArrayList<Tickets>> ticketsList;
+	public List<ArrayList<Tickets>> ticketsList;
 
 	private Scanner sc = new Scanner(System.in);
 
 	public TicketsView() {
 
 		this.tickets = new TicketsController();
+		tickets.ticketPages(tickets.httpConnection());// fetch data and load constructor with tickets also create pages
+														// with 25 tickes per page
+
 		this.ticketsList = tickets.ticketsList;
 
 	}
 
-	public void init() {// fetch data and start application
-		tickets.ticketPages(tickets.httpConnection());// fetch data and load constructor with tickets also create pages
-														// with 25 tickes per page
-		
-		mainMenu(); // start menu options1
-	}
-
-	private void mainMenu() {// the first menu that appears to the user
+	public void initApp() {// the first menu that appears to the user
 		int totalOfTickets;
 		int firstId;
 		int lastId;
-		if(ticketsList.size() > 0) {
+
+		try {
 			totalOfTickets = countElemetnsInList(); // get the number of tickets
 			firstId = ticketsList.get(0).get(0).getId();// first ticket id
 			lastId = ticketsList.get(ticketsList.size() - 1).get(ticketsList.get(ticketsList.size() - 1).size() - 1)
-				.getId();// last ticket
+					.getId();// last ticket id
+
 			System.out.println("*** Application Running***");
 			System.out.println("*** Welcome to the Ticket Viewer ***\n");
 			System.out.println("************************************");
@@ -44,11 +42,11 @@ public class TicketsView {
 			System.out.println("First Ticket id: " + firstId);
 			System.out.println("Last Ticket id: " + lastId);
 			System.out.println("************************************\n");
-
 			startMainMenu();
+		} catch (Exception e) {
+			System.out.println("We couldn't get the tickets right now, please try again later.");
+			// System.out.println(e.getLocalizedMessage());
 		}
-
-		
 
 	}
 
@@ -68,7 +66,7 @@ public class TicketsView {
 			System.out.println("Enter your option:");
 			try {
 
-				input = sc.nextLine();
+				input = sc.nextLine().trim();
 
 				if (input.matches("^[a-zA-Z0-9]*$")) {// checks if a the input is only alphanumeric characters
 
@@ -114,11 +112,11 @@ public class TicketsView {
 			System.out.println("\nType: \"back\" to go back to the Main menu.");
 			System.out.println("Type: \"0\" or type \"exit\" to end the Application.");
 			try {// dont end the app when a invalid input
-				input = sc.nextLine();
+				input = sc.nextLine().trim();
 				if (input.matches("^[a-zA-Z0-9]*$")) {// checks if a the input is only alphanumeric characters
 
 					if (input.equalsIgnoreCase("back")) {// go back to main menu
-						mainMenu();
+						initApp();
 
 					} else if (input.equalsIgnoreCase("exit") || Integer.parseInt(input) == 0) { // end the application
 						System.out.println("Thank you for using this App, have a good one.");
@@ -171,11 +169,12 @@ public class TicketsView {
 		}
 		return size;
 	}
+
 //*********************************************************************
 //********************* Single ticket view
-	//validates inputs and navigate through the tickets 
+	// validates inputs and navigate through the tickets
 	private void singleTicketMenu() {
-		
+
 		String input = "";
 		int exit = 1;
 		int targetId;
@@ -187,25 +186,25 @@ public class TicketsView {
 			System.out.println("\nType: \"back\" to go back to the Main menu.");
 			System.out.println("Type: \"0\" or type \"exit\" to end the Application.");
 			try {// dont end the app when a invalid input
-				input = sc.nextLine();
+				input = sc.nextLine().trim();
 				if (input.matches("^[a-zA-Z0-9]*$")) {// checks if a the input is only alphanumeric characters
 
 					if (input.equalsIgnoreCase("back")) {// go back to main menu
-						mainMenu();
+						initApp();
 
 					} else if (input.equalsIgnoreCase("exit") || Integer.parseInt(input) == 0) { // end the application
 						System.out.println("Thank you for using this App, have a good one.");
 						exit = 0;
 						System.exit(exit);
 					} else { // retrieve the ticket and print to the cli
-						
+
 						targetId = Integer.parseInt(input);
-						if(getTicket(targetId) != null) {
-							
+						if (getTicket(targetId) != null) {
+
 							System.out.println("*** Ticket requested ***");
 							System.out.println(getTicket(targetId));
-		
-						}else {
+
+						} else {
 							System.out.println("Ticket Id Not Found.");
 							System.out.println("Please, check the Id list for references\n");
 						}
@@ -220,13 +219,13 @@ public class TicketsView {
 		} while (exit != 0);
 
 	}
-	
-	//display the tickets id so the user can select single ticket view
+
+	// display the tickets id so the user can select single ticket view
 	private void showTicketsIds() {
 		System.out.println("*** Tickets Id's List ***\n");
 		for (ArrayList<Tickets> innerList : ticketsList) {
 
-			for (Tickets ticket : innerList) {//display tickets ids
+			for (Tickets ticket : innerList) {// display tickets ids
 
 				System.out.print(ticket.getId() + ", ");
 			}
@@ -238,19 +237,19 @@ public class TicketsView {
 	// print the ticket selected by the user else return null
 	private Tickets getTicket(int targetId) {
 
-			for (ArrayList<Tickets> innerList : ticketsList) {//iterate through the list
+		for (ArrayList<Tickets> innerList : ticketsList) {// iterate through the list
 
-				for (Tickets ticket : innerList) {
+			for (Tickets ticket : innerList) {
 
-					if (ticket.getId() == targetId) {//retrieve ticket that matches the id						
-						
-						return ticket;
-					}
+				if (ticket.getId() == targetId) {// retrieve ticket that matches the id
+
+					return ticket;
 				}
-
 			}
-			return null;
-		
+
+		}
+		return null;
+
 	}
 
 }
