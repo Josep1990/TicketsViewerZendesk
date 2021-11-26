@@ -19,15 +19,13 @@ public class TicketsController {
 	public List<ArrayList<Tickets>> ticketsList = new ArrayList<>();
 
 	public ArrayList<Tickets> httpConnection() {
-		HttpClient client = null;
-		HttpRequest request = null;
-
+		
 		String url = "https://zccnewintern.zendesk.com/api/v2/requests/open.json";//api endpoint
 		String[] authHeader = { "Authorization",
 				"Basic am9zZS5wc2dAaG90bWFpbC5jb20vdG9rZW46RWp3dVRRZnVlTjJUMGxqODlubHNiMFJEUGFtVDRMSGE5VkxWWTBwQw==" };//validation header
 
-		client = HttpClient.newHttpClient();
-		request = HttpRequest.newBuilder().uri(URI.create(url)).header(authHeader[0], authHeader[1])
+		HttpClient client = HttpClient.newHttpClient();
+		HttpRequest request = HttpRequest.newBuilder().uri(URI.create(url)).header(authHeader[0], authHeader[1])
 				.timeout(Duration.ofSeconds(90)).build();
 
 		return client.sendAsync(request, HttpResponse.BodyHandlers.ofString()).thenApply(HttpResponse::body)
@@ -40,7 +38,8 @@ public class TicketsController {
 		// providing a delegate to the method.
 
 	}
-
+	
+	//this method parse the json get the right fields for the tickets and load into the constructor
 	private static ArrayList<Tickets> parseJSON(String responseBody) {
 
 		try {
@@ -69,7 +68,8 @@ public class TicketsController {
 
 		return ticketsData;
 	}
-
+	
+	//for the project i decided to use a bidimensional arraylist as we have to have pages when more than 25 tickets are returned
 	public void ticketPages(ArrayList<Tickets> ticketsData) {
 
 		int ticketsPerPage = 25;
