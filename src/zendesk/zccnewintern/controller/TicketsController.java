@@ -22,9 +22,9 @@ public class TicketsController {
 		HttpClient client = null;
 		HttpRequest request = null;
 
-		String url = "https://zccnewintern.zendesk.com/api/v2/requests/open.json";
+		String url = "https://zccnewintern.zendesk.com/api/v2/requests/open.json";//api endpoint
 		String[] authHeader = { "Authorization",
-				"Basic am9zZS5wc2dAaG90bWFpbC5jb20vdG9rZW46RWp3dVRRZnVlTjJUMGxqODlubHNiMFJEUGFtVDRMSGE5VkxWWTBwQw==" };
+				"Basic am9zZS5wc2dAaG90bWFpbC5jb20vdG9rZW46RWp3dVRRZnVlTjJUMGxqODlubHNiMFJEUGFtVDRMSGE5VkxWWTBwQw==" };//validation header
 
 		client = HttpClient.newHttpClient();
 		request = HttpRequest.newBuilder().uri(URI.create(url)).header(authHeader[0], authHeader[1])
